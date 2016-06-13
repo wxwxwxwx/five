@@ -1,0 +1,46 @@
+
+@keyframes move{
+  0%{
+    background-position: 2000px 0;
+  }
+  50%{
+    background-position: 0 0;
+  }
+  100%{
+    background-position: -2000px 0;
+  }
+}
+@keyframes slow {
+  0% {
+
+  }
+  50% {
+transform: translate3d(0, 0, 0)
+  }
+  100% {
+transform: translate3d(-19860px, 0, 0)
+  }
+}
+.box{
+  position: absolute;
+  margin: auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background-image: url(../image/AA.jpg);
+  /*animation:move 300s linear infinite;*/
+  z-index: -1;
+
+}
+#canvas{
+  position: absolute;
+  display: block;
+  margin: auto;
+  left: 0;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  background: rgba(211,211,211,0.4);
+}
