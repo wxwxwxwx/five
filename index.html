@@ -129,7 +129,7 @@
 }
 .button {
     margin: 15px 0px;
-    width: 100px;
+    width: 150px;
     height: 50px;
     font-size: 30px;
     line-height: 50px;
@@ -166,216 +166,15 @@
   			<span>0</span>
         <div class="white"></div>
 		  </div>
-		<div id="play" class="button">新游戏</div>
-		<div id="back" class="button">棋谱</div>
-		<div id="explain" class="button">说明</div>
+
+		<div id="back" class="ops button side">VS玩家</div>
+		<div id="explain" class="ops button ">VS电脑</div>
+    <div id="play" class="button">新游戏</div>
     </div>
     </div>
   </div>
 </body>
 <script src="./bower_components/jquery/dist/jquery.js"></script>
-<script>
-$(function(){
 
-  var  canvasS = 600;
-  var  row = 15;
-  var  blockS = canvasS/row;
-  var  ctx = $('#canvas').get(0).getContext('2d');
-  var  starRadius = 3;
-
-
-  $('#canvas').get(0).height = canvasS;
-  $('#canvas').get(0).width = canvasS;
-
-  var draw = function(){
-    var off = blockS/2 + 0.5;
-    var lineWidth = canvasS - blockS;
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.translate(off,off);
-    for(var i = 0; i<row; i++){
-      ctx.moveTo(0,0)
-      ctx.lineTo(lineWidth,0);
-      ctx.translate(0,blockS);
-    }
-    ctx.stroke();
-    ctx.closePath();
-    ctx.restore();
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.translate(off,off);
-    for(var i = 0; i<row; i++){
-      ctx.moveTo(0,0)
-      ctx.lineTo(0,lineWidth);
-      ctx.translate(blockS,0);
-    }
-    ctx.stroke();
-    ctx.closePath();
-    ctx.restore();
-// 五个小点
-    var points = [3.5*blockS+0.5 , 11.5*blockS + 0.5];
-    for(var i = 0; i< 2; i++){
-      for( var j=0; j<2; j++){
-        var x = points[i];
-        var y = points[j];
-        ctx.save();
-        ctx.beginPath();
-        ctx.translate(x, y);
-        ctx.arc(0,0,starRadius,0,(Math.PI/180)*360);
-        ctx.fill();
-        ctx.closePath();
-        ctx.restore();
-      }
-    }
-    ctx.save();
-    ctx.beginPath();
-    ctx.translate(7.5*blockS+0.5, 7.5*blockS + 0.5);
-    ctx.arc(0,0,starRadius,0,(Math.PI/180)*360);
-    ctx.fill();
-    ctx.closePath();
-    ctx.restore();
-  }
-  draw();
-
-  var qiziRadius = blockS/2*0.8;
-
-  var num = 0;
-  var num1 = 0;
-
-  var drop = function(qizi){
-    ctx.save();
-    ctx.beginPath();
-    ctx.translate((qizi.x+0.5)*blockS + 0.5, (qizi.y+0.5)*blockS + 0.5);
-    ctx.arc(0,0,qiziRadius,0,Math.PI/180*360);
-    var JZ = ctx.createRadialGradient(0,0,15,-4,-4,2)
-    JZ.addColorStop(0, 'black');
-    JZ.addColorStop(0.9,'rgba(99,99,99,99)')
-    JZ.addColorStop(1, 'rgba(122,122,122,1)');
-
-
-    var JD = ctx.createRadialGradient(0,0,15,-4,-3,4)
-      JD.addColorStop(0, 'rgba(244,244,244,1)');
-    JD.addColorStop(0.9, 'rgba(255,255,255,1)');
-    JD.addColorStop(1, 'rgba(255,255,255,1)');
-    if( qizi.color === 1){
-      ctx.fillStyle = JZ;
-      ctx.fill();
-      $('#side2').addClass('side')
-      $('#side1').removeClass('side')
-      num +=1;
-      $('#side1').find('span').text(num);
-
-    }else{
-      ctx.fillStyle = JD;
-      ctx.fill();
-      $('#side1').addClass('side');
-      $('#side2').removeClass('side')
-      num1 +=1;
-      $('#side2').find('span').text(num1);
-    }
-    ctx.closePath();
-    ctx.restore();
-  }
-
-  var kaiguan = true;
-  all = {};
-
-  panduan = function(qizi){
-    var shuju = {};
-    $.each(all,function(k,v){
-      if( v.color === qizi.color ){
-        shuju[k] = v;
-      }
-    })
-    var shu = 1,hang=1,zuoxie=1,youxie=1;
-    var tx,ty;
-
-    /*|*/
-    tx = qizi.x; ty = qizi.y;
-    while ( shuju [ tx + '-' + (ty + 1) ]){
-      shu ++;ty++;
-    }
-    tx = qizi.x; ty = qizi.y;
-    while ( shuju [ tx + '-' + (ty - 1) ]){
-      shu ++; ty--;
-    }
-
-    /*-*/
-    tx = qizi.x ; ty = qizi.y;
-    while( shuju[ (tx+1) + '-' + ty ] ){
-      hang++;tx++;
-    }
-    tx = qizi.x ; ty = qizi.y;
-    while( shuju[ (tx-1) + '-' + ty ] ){
-      hang++;tx--;
-    }
-
-    tx = qizi.x; ty = qizi.y;
-    while( shuju[ (tx-1) + '-' + (ty-1) ] ){
-      zuoxie++;tx--;ty--;
-    }
-    tx = qizi.x ; ty = qizi.y;
-    while( shuju[ (tx+1) + '-' + (ty+1) ] ){
-      zuoxie++;tx++;ty++;
-    }
-
-    tx = qizi.x ; ty = qizi.y;
-    while( shuju[ (tx+1) + '-' + (ty-1) ] ){
-      youxie++;tx++;ty--;
-    }
-    tx = qizi.x ; ty = qizi.y;
-    while( shuju[ (tx-1) + '-' + (ty+1) ] ){
-      youxie++;tx--;ty++;
-    }
-
-    if( shu >=5  || hang>=5 || zuoxie>=5 || youxie>=5){
-      return true;
-    }
-  }
-
-  $('#canvas').on('click',function(e){
-    var x = Math.floor(e.offsetX/blockS);
-    var y = Math.floor(e.offsetY/blockS);
-    console.log(1)
-    if( all[ x + '-' + y ]){
-      return;
-    }
-
-    var qizi;
-    if(kaiguan){
-      qizi = {x:x,y:y,color:1};
-      drop(qizi);
-      if( panduan(qizi) ){
-        alert('黑棋获胜');
-        return;
-      };
-    }else{
-      qizi = {x:x,y:y,color:0};
-      drop(qizi);
-      if( panduan(qizi) ){
-        alert('白棋获胜');
-        return;
-      };
-    }
-    kaiguan = !kaiguan;
-    all[ x + '-' + y ] = qizi;
-
-  });
-  $('#play').on('click',function(){
-    ctx.clearRect(0,0,canvasS,canvasS);
-    draw();
-    all = {};
-    num = 0;
-    num1 = 0;
-    $('.side').removeClass('side')
-    $('#side1').addClass('side').find('span').text('0');
-    $('#side2').find('span').text('0');
-    kaiguan = true;
-
-  })
-
-})
-</script>
+<script src="./js/index.js"></script>
 </html>
